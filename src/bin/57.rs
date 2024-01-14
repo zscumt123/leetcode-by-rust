@@ -37,17 +37,20 @@ struct Solution;
 impl Solution {
     pub fn insert(intervals: Vec<Vec<i32>>, new_interval: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = vec![];
-        if intervals.is_empty() {
-            return res;
-        }
-        let (mut start, mut end) = (new_interval[0], new_interval[1]);
+        let mut intervals = intervals;
+        intervals.push(new_interval);
+        intervals.sort();
 
-        intervals.iter().for_each(|x| {
-            if x[1] < start {
-                res.push(vec![x[0], x[1]])
-            } else {
+        let (mut start, mut end) = (intervals[0][0], intervals[0][1]);
+        //intervals = [[1,3],[6,9]], newInterval = [2,5]
+        intervals.iter().skip(1).for_each(|x| {
+            if end < x[0] {
+                res.push(vec![start, end]);
+                start = x[0]
             }
+            end = end.max(x[1])
         });
+        res.push(vec![start, end]);
 
         res
     }
